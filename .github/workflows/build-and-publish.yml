@@ -1,0 +1,49 @@
+name: Build and publish all container images
+
+on:
+  schedule:
+  - cron: 0 7 * * *
+  push:
+    branches: [main, dev]
+    # Publish semver tags as releases.
+    tags: [v*.*.*]
+     # don't rebuild if only documentation has changed
+    paths-ignore: ['**.md']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  distrobox-container-images:
+    name: Build and push distrobox container images
+    permissions:
+      contents: read
+      actions: read
+      packages: write
+      id-token: write
+    strategy:
+      matrix:
+        image-name:
+        - cider-arch
+        - cider-debian
+        - cider-fedora
+        - dev-arch
+        - dev-fedora
+        - emacs-alpine
+        - emacs-arch
+        - emacs-fedora
+        - emacs-opensuse
+        - latex-alpine
+        - latex-arch
+        - latex-fedora
+        platform:
+        - linux/amd64
+      fail-fast: false
+    uses: MArpogaus/image-builder-action/.github/workflows/build-and-publish.yml@main
+    with:
+      image-name: ${{ matrix.image-name }}
+      containerfile: ./containerfiles/${{ matrix.image-name }}.containerfile
+      context: ./context
+      platform: ${{ matrix.platform }}
+    secrets:
+      SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}
