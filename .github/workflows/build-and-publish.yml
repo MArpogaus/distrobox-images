@@ -39,7 +39,7 @@ jobs:
         platform:
         - linux/amd64
       fail-fast: false
-    uses: MArpogaus/image-builder-action/.github/workflows/build-and-publish.yml@2b112854e5cc1b71e7e3c5c914dd9c5c349f9c84
+    uses: ./.github/workflows/build-and-publish-one-image.yml
     with:
       image-name: ${{ matrix.image-name }}
       containerfile: ./containerfiles/${{ matrix.image-name }}.containerfile
