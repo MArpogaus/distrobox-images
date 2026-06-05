@@ -16,18 +16,17 @@
 
 ** Flavours Overview
 
-This repository provides pre-built container images across 5 distributions with
+This repository provides 19 pre-built container images across 5 distributions with
 composable layers. Each image is built from a single template using build args to
 select the base image and layer combination.
 
-| Distro   | Images                                                                                             | Count |
-|----------+----------------------------------------------------------------------------------------------------+-------|
-| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                         | 6     |
-| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                         | 6     |
-| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai                                                              | 4     |
-| Debian   | cider                                                                                               | 1     |
-| OpenSUSE | emacs, emacs-ai                                                                                     | 2     |
-| **Total**|                                                                                                    | **19**| | |
+| Distro   | Images                                                    |
+|----------+-----------------------------------------------------------|
+| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai |
+| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai |
+| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai                     |
+| Debian   | cider                                                      |
+| OpenSUSE | emacs, emacs-ai                                            |
 
 The available layers are:
 
@@ -63,9 +62,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
 
 *** Build Arguments
 
-| Arg         | Description                                          | Example                       |
-|-------------+------------------------------------------------------+-------------------------------|
-| BASE_IMAGE  | Upstream toolbox image                               | ghcr.io/ublue-os/arch-toolbox |
+| Arg         | Description                                          | Example                                  |
+|-------------+------------------------------------------------------+------------------------------------------|
+| BASE_IMAGE  | Upstream toolbox image                               | ghcr.io/ublue-os/arch-toolbox:latest     |
 | LAYERS      | Comma-separated list of build scripts                | emacs,latex,ai                |
 
 *** CI Pipeline
@@ -157,9 +156,9 @@ To fork this repository and create your own signed container images:
 
 3. *Add the image to the build matrix* in =.github/workflows/build-and-publish.yml=:
    #+begin_src yaml
-   - image-name: emacs-mylayer-fedora
+   - image-name: mytool-fedora
      base-image: quay.io/fedora/fedora-toolbox:latest
-     layers: emacs,mylayer
+     layers: mytool
      context: fedora
    #+end_src
 
