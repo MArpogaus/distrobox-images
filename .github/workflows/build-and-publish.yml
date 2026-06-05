@@ -49,6 +49,10 @@ jobs:
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: emacs,latex,ai
           context: arch
+        - image-name: ai-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: ai
+          context: arch
         # Fedora
         - image-name: cider-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest
@@ -74,6 +78,10 @@ jobs:
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: emacs,latex,ai
           context: fedora
+        - image-name: ai-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: ai
+          context: fedora
         # Alpine
         - image-name: emacs-alpine
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
@@ -95,10 +103,18 @@ jobs:
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: emacs,latex,ai
           context: alpine
+        - image-name: ai-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: ai
+          context: alpine
         # Debian
         - image-name: cider-debian
           base-image: quay.io/toolbx-images/debian-toolbox:unstable
           layers: cider
+          context: debian
+        - image-name: ai-debian
+          base-image: quay.io/toolbx-images/debian-toolbox:unstable
+          layers: ai
           context: debian
         # OpenSUSE
         - image-name: emacs-opensuse
@@ -108,6 +124,10 @@ jobs:
         - image-name: emacs-ai-opensuse
           base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed
           layers: emacs,ai
+          context: opensuse
+        - image-name: ai-opensuse
+          base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed
+          layers: ai
           context: opensuse
       fail-fast: false
     uses: ./.github/workflows/build-and-publish-one-image.yml
