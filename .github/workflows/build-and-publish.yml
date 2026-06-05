@@ -29,10 +29,6 @@ jobs:
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: cider
           context: arch
-        - image-name: dev-arch
-          base-image: ghcr.io/ublue-os/arch-toolbox:latest
-          layers: emacs,latex
-          context: arch
         - image-name: emacs-arch
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: emacs
@@ -57,10 +53,6 @@ jobs:
         - image-name: cider-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: cider
-          context: fedora
-        - image-name: dev-fedora
-          base-image: quay.io/fedora/fedora-toolbox:latest
-          layers: emacs,latex
           context: fedora
         - image-name: emacs-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest

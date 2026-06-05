@@ -22,17 +22,16 @@ select the base image and layer combination.
 
 | Distro   | Images                                                                                             | Count |
 |----------+----------------------------------------------------------------------------------------------------+-------|
-| Arch     | cider, dev, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                    | 7     |
-| Fedora   | cider, dev, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                     | 7     |
+| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                         | 6     |
+| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai                                         | 6     |
 | Alpine   | emacs, latex, emacs-ai, emacs-latex-ai                                                              | 4     |
 | Debian   | cider                                                                                               | 1     |
 | OpenSUSE | emacs, emacs-ai                                                                                     | 2     |
-| **Total**|                                                                                                    | **22**| | | |
+| **Total**|                                                                                                    | **19**| | |
 
 The available layers are:
 
 - *cider* — Cider game development environment
-- *dev* — Development tools (emacs + latex on Arch, emacs + latex on Fedora)
 - *emacs* — Emacs editor
 - *latex* — LaTeX build tools
 - *ai* — AI tools (opencode + gemini-cli via npm)
@@ -71,7 +70,7 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
 
 *** CI Pipeline
 
-The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 22 images.
+The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 19 images.
 Each matrix entry specifies:
 
 - *image-name* — Output image name (e.g., =emacs-latex-ai-arch=)
@@ -104,10 +103,10 @@ This project provides both pre-built signed images and a framework for creating 
 
 #+begin_src bash
 # Using distrobox
-distrobox create --image ghcr.io/marpogaus/arch:latest --name arch-dev
+distrobox create --image ghcr.io/marpogaus/emacs-arch:latest --name emacs-arch
 
 # Using toolbox
-toolbox create --image ghcr.io/marpogaus/arch:latest arch-dev
+toolbox create --image ghcr.io/marpogaus/emacs-arch:latest emacs-arch
 #+end_src
 
 **** For secureblue and Other Security-Enhanced Systems
