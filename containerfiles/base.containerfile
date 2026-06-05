@@ -13,4 +13,4 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    sh -c "set -ex; IFS=','; for l in \$LAYERS; do /ctx/\${l}-build.sh; done"
+    sh -c 'set -ex; for l in $(echo ${LAYERS} | tr "," " "); do /ctx/${l}-build.sh; done'
