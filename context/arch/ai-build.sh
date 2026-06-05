@@ -3,3 +3,4 @@ set -ouex pipefail
 
 pacman -S --noconfirm --needed nodejs npm
 npm install -g opencode-ai @google/gemini-cli
+npm install -g --ignore-scripts @earendil-works/pi-coding-agent
