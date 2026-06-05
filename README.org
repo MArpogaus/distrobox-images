@@ -30,7 +30,7 @@ select the base image and layer combination.
 
 The available layers are:
 
-- *cider* — Cider game development environment
+- *cider* — Cider, a cross-platform Apple Music client
 - *emacs* — Emacs editor
 - *latex* — LaTeX build tools
 - *ai* — AI tools (opencode + gemini-cli via npm)
