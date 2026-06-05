@@ -21,6 +21,10 @@ on:
         type: string
         required: false
         default: ''
+      build-args:
+        type: string
+        required: false
+        default: ''
     secrets:
       SIGNING_SECRET:
         required: true
@@ -48,6 +52,7 @@ jobs:
         context: ${{ inputs.context }}
         platform: ${{ inputs.platform }}
         slsa-verify-source: ${{ inputs.slsa-verify-source }}
+        build-args: ${{ inputs.build-args }}
         signing-secret: ${{ secrets.SIGNING_SECRET }}
 
   provenance:
