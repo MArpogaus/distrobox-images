@@ -16,60 +16,42 @@
 
 ** Flavours Overview
 
-This repository provides 19 pre-built container images across 5 distributions with
+This repository provides 25 pre-built container images across 5 distributions with
 composable layers. Each image is built from a single template using build args to
 select the base image and layer combination.
 
-| Distro   | Images                                                    |
-|----------+-----------------------------------------------------------|
-| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai |
-| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai |
-| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai                     |
-| Debian   | cider                                                      |
-| OpenSUSE | emacs, emacs-ai                                            |
+| Distro   | Images                                                         |
+|----------+----------------------------------------------------------------|
+| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
+| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
+| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai, ai                     |
+| Debian   | cider, ai                                                      |
+| OpenSUSE | emacs, emacs-ai, ai                                            |
 
 The available layers are:
 
 - *cider* — Cider, a cross-platform Apple Music client
 - *emacs* — Emacs editor
 - *latex* — LaTeX build tools
-- *ai* — AI tools (opencode + gemini-cli via npm)
+- *ai* — AI tools (opencode + gemini-cli + pi-coding-agent via npm)
+- *ai (standalone)* — Same as *ai* layer, but without emacs base
 
 ** Build System
 
 *** Architecture
 
-All layered images share a single containerfile template:
-
-#+begin_src dockerfile :tangle no
-ARG BASE_IMAGE
-ARG LAYERS
-
-FROM scratch AS ctx
-COPY . /
-
-FROM ${BASE_IMAGE}
-
-LABEL com.github.containers.toolbox="true" \
-      usage="This image is meant to be used with the toolbox or distrobox command"
-
-RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
-    sh -c "set -ex; IFS=','; for l in \$LAYERS; do /ctx/\${l}-build.sh; done"
-#+end_src
+All images share a single [[file:containerfiles/base.containerfile][base containerfile template]] customized using build arguments.
 
 *** Build Arguments
 
-| Arg         | Description                                          | Example                                  |
-|-------------+------------------------------------------------------+------------------------------------------|
-| BASE_IMAGE  | Upstream toolbox image                               | ghcr.io/ublue-os/arch-toolbox:latest     |
-| LAYERS      | Comma-separated list of build scripts                | emacs,latex,ai                |
+| Arg       | Description                           | Example                              |
+|-----------+---------------------------------------+--------------------------------------|
+| BASE_IMAGE | Upstream toolbox image                | ghcr.io/ublue-os/arch-toolbox:latest |
+| LAYERS    | Comma-separated list of build scripts | emacs,latex,ai                       |
 
 *** CI Pipeline
 
-The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 19 images.
+The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 25 images.
 Each matrix entry specifies:
 
 - *image-name* — Output image name (e.g., =emacs-latex-ai-arch=)
@@ -155,6 +137,16 @@ To fork this repository and create your own signed container images:
    - Scripts must use =set -ouex pipefail= and perform their installation/configuration
 
 3. *Add the image to the build matrix* in =.github/workflows/build-and-publish.yml=:
+
+   For *layered images* (add to existing base):
+   #+begin_src yaml
+   - image-name: emacs-mytool-fedora
+     base-image: ghcr.io/marpogaus/emacs-arch:latest
+     layers: emacs,mytool
+     context: fedora
+   #+end_src
+
+   For *standalone images* (no existing base):
    #+begin_src yaml
    - image-name: mytool-fedora
      base-image: quay.io/fedora/fedora-toolbox:latest
