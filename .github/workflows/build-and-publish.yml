@@ -14,8 +14,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  distrobox-container-images:
-    name: Build and push distrobox container images
+  build:
+    name: Build ${{ matrix.image-name }}
     permissions:
       contents: read
       actions: read
@@ -23,27 +23,121 @@ jobs:
       id-token: write
     strategy:
       matrix:
-        image-name:
-        - cider-arch
-        - cider-debian
-        - cider-fedora
-        - dev-arch
-        - dev-fedora
-        - emacs-alpine
-        - emacs-arch
-        - emacs-fedora
-        - emacs-opensuse
-        - latex-alpine
-        - latex-arch
-        - latex-fedora
-        platform:
-        - linux/amd64
+        include:
+        # Arch
+        - image-name: cider-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: cider
+          context: arch
+        - image-name: emacs-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: emacs
+          context: arch
+        - image-name: latex-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: latex
+          context: arch
+        - image-name: emacs-ai-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: emacs,ai
+          context: arch
+        - image-name: emacs-latex-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: emacs,latex
+          context: arch
+        - image-name: emacs-latex-ai-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: emacs,latex,ai
+          context: arch
+        - image-name: ai-arch
+          base-image: ghcr.io/ublue-os/arch-toolbox:latest
+          layers: ai
+          context: arch
+        # Fedora
+        - image-name: cider-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: cider
+          context: fedora
+        - image-name: emacs-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: emacs
+          context: fedora
+        - image-name: latex-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: latex
+          context: fedora
+        - image-name: emacs-ai-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: emacs,ai
+          context: fedora
+        - image-name: emacs-latex-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: emacs,latex
+          context: fedora
+        - image-name: emacs-latex-ai-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: emacs,latex,ai
+          context: fedora
+        - image-name: ai-fedora
+          base-image: quay.io/fedora/fedora-toolbox:latest
+          layers: ai
+          context: fedora
+        # Alpine
+        - image-name: emacs-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: emacs
+          context: alpine
+        - image-name: latex-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: latex
+          context: alpine
+        - image-name: emacs-ai-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: emacs,ai
+          context: alpine
+        - image-name: emacs-latex-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: emacs,latex
+          context: alpine
+        - image-name: emacs-latex-ai-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: emacs,latex,ai
+          context: alpine
+        - image-name: ai-alpine
+          base-image: quay.io/toolbx-images/alpine-toolbox:edge
+          layers: ai
+          context: alpine
+        # Debian
+        - image-name: cider-debian
+          base-image: quay.io/toolbx-images/debian-toolbox:unstable
+          layers: cider
+          context: debian
+        - image-name: ai-debian
+          base-image: quay.io/toolbx-images/debian-toolbox:unstable
+          layers: ai
+          context: debian
+        # OpenSUSE
+        - image-name: emacs-opensuse
+          base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed
+          layers: emacs
+          context: opensuse
+        - image-name: emacs-ai-opensuse
+          base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed
+          layers: emacs,ai
+          context: opensuse
+        - image-name: ai-opensuse
+          base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed
+          layers: ai
+          context: opensuse
       fail-fast: false
     uses: ./.github/workflows/build-and-publish-one-image.yml
     with:
       image-name: ${{ matrix.image-name }}
-      containerfile: ./containerfiles/${{ matrix.image-name }}.containerfile
-      context: ./context
-      platform: ${{ matrix.platform }}
+      containerfile: ./containerfiles/base.containerfile
+      context: ./context/${{ matrix.context }}
+      platform: linux/amd64
+      build-args: |
+        BASE_IMAGE=${{ matrix.base-image }}
+        LAYERS=${{ matrix.layers }}
     secrets:
       SIGNING_SECRET: ${{ secrets.SIGNING_SECRET }}

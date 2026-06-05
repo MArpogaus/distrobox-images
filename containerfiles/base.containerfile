@@ -1,14 +1,15 @@
 FROM scratch AS ctx
-COPY fedora /
+COPY . /
 
-# Base Image
-FROM quay.io/fedora/fedora-toolbox:latest
+ARG BASE_IMAGE
+FROM ${BASE_IMAGE}
 
 LABEL com.github.containers.toolbox="true" \
       usage="This image is meant to be used with the toolbox or distrobox command"
 
+ARG LAYERS
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
-    /ctx/cider-build.sh
+    sh -c 'set -ex; for l in $(echo ${LAYERS} | tr "," " "); do /ctx/${l}-build.sh; done'

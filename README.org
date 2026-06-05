@@ -14,6 +14,54 @@
 
 #+TOC: headlines 2 local
 
+** Flavours Overview
+
+This repository provides 25 pre-built container images across 5 distributions with
+composable layers. Each image is built from a single template using build args to
+select the base image and layer combination.
+
+| Distro   | Images                                                         |
+|----------+----------------------------------------------------------------|
+| Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
+| Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
+| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai, ai                     |
+| Debian   | cider, ai                                                      |
+| OpenSUSE | emacs, emacs-ai, ai                                            |
+
+The available layers are:
+
+- *cider* — Cider, a cross-platform Apple Music client
+- *emacs* — Emacs editor
+- *latex* — LaTeX build tools
+- *ai* — AI tools (opencode + gemini-cli + pi-coding-agent via npm)
+- *ai (standalone)* — Same as *ai* layer, but without emacs base
+
+** Build System
+
+*** Architecture
+
+All images share a single [[file:containerfiles/base.containerfile][base containerfile template]] customized using build arguments.
+
+*** Build Arguments
+
+| Arg       | Description                           | Example                              |
+|-----------+---------------------------------------+--------------------------------------|
+| BASE_IMAGE | Upstream toolbox image                | ghcr.io/ublue-os/arch-toolbox:latest |
+| LAYERS    | Comma-separated list of build scripts | emacs,latex,ai                       |
+
+*** CI Pipeline
+
+The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 25 images.
+Each matrix entry specifies:
+
+- *image-name* — Output image name (e.g., =emacs-latex-ai-arch=)
+- *base-image* — Upstream toolbox base image
+- *layers* — Comma-separated layer scripts
+- *context* — Build context directory (=./context/<distro>=)
+
+Every build produces a cryptographically signed image with SLSA Level 3 provenance
+via [[https://github.com/MArpogaus/image-builder-action][image-builder-action]].
+
 ** About The Project
 
 This repository contains containerfiles for building signed container images optimized for use with [[https://github.com/89luca89/distrobox][distrobox]] and [[https://github.com/containers/toolbox][toolbox]].
@@ -36,10 +84,10 @@ This project provides both pre-built signed images and a framework for creating 
 
 #+begin_src bash
 # Using distrobox
-distrobox create --image ghcr.io/marpogaus/arch:latest --name arch-dev
+distrobox create --image ghcr.io/marpogaus/emacs-arch:latest --name emacs-arch
 
 # Using toolbox
-toolbox create --image ghcr.io/marpogaus/arch:latest arch-dev
+toolbox create --image ghcr.io/marpogaus/emacs-arch:latest emacs-arch
 #+end_src
 
 **** For secureblue and Other Security-Enhanced Systems
@@ -84,24 +132,30 @@ To fork this repository and create your own signed container images:
 
 1. *Fork this repository* to your GitHub account
 
-2. *Add your containerfiles* to the repository:
-   - Create directories for each image (e.g., =myimage=)
-   - Add =Dockerfile= to each directory
-   - Ensure your Dockerfile includes the toolbox/distrobox label:
-     #+begin_src dockerfile
-     LABEL com.github.containers.toolbox="true" \
-           usage="This image is meant to be used with the toolbox or distrobox command"
-     #+end_src
+2. *Add your build script(s)* to the appropriate context directory:
+   - Create or modify scripts in =context/<distro>/<layer>-build.sh= (e.g., =context/fedora/mylayer-build.sh=)
+   - Scripts must use =set -ouex pipefail= and perform their installation/configuration
 
-3. *Update the build matrix* in =.github/workflows/build-and-publish.yml=:
+3. *Add the image to the build matrix* in =.github/workflows/build-and-publish.yml=:
+
+   For *layered images* (add to existing base):
    #+begin_src yaml
-   strategy:
-     matrix:
-       containerfile:
-         - ...            # existing images
-         - myimage        # your new image
-         - anothername    # another image
+   - image-name: emacs-mytool-fedora
+     base-image: ghcr.io/marpogaus/emacs-arch:latest
+     layers: emacs,mytool
+     context: fedora
    #+end_src
+
+   For *standalone images* (no existing base):
+   #+begin_src yaml
+   - image-name: mytool-fedora
+     base-image: quay.io/fedora/fedora-toolbox:latest
+     layers: mytool
+     context: fedora
+   #+end_src
+
+   The =LAYERS= argument accepts a comma-separated list of build scripts. The
+   containerfile template =base.containerfile= handles everything else.
 
 4. *Set up container signing* (highly recommended):
 
@@ -119,7 +173,7 @@ To fork this repository and create your own signed container images:
       - Copy the contents of =cosign.key= into the secret value
       - *Never share or commit the =cosign.key= file*
 
-   d. Replace the public key in the repo with your new one .
+   d. Replace the public key in the repo with your new one.
 
 5. *Push your changes* and GitHub Actions will automatically build and sign your images
 
