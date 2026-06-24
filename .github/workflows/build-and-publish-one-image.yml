@@ -21,7 +21,19 @@ on:
         type: string
         required: false
         default: ''
+      cosign-public-key:
+        type: string
+        required: false
+        default: ''
       build-args:
+        type: string
+        required: false
+        default: ''
+      free-disk-space:
+        type: boolean
+        required: false
+        default: true
+      overwrite-ref-tag:
         type: string
         required: false
         default: ''
@@ -40,23 +52,27 @@ jobs:
       packages: write
       id-token: write
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0   # v7.0.0
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0   # v7.0.0
 
-    - name: Build and Push Image
-      id: build
-      uses: MArpogaus/image-builder-action@376511ec51c9d0d2418ecb5505eeb87f09353df6  # v1.4.0
-      with:
-        image-name: ${{ inputs.image-name }}
-        containerfile: ${{ inputs.containerfile }}
-        context: ${{ inputs.context }}
-        platform: ${{ inputs.platform }}
-        slsa-verify-source: ${{ inputs.slsa-verify-source }}
-        build-args: ${{ inputs.build-args }}
-        signing-secret: ${{ secrets.SIGNING_SECRET }}
+      - name: Build and Push Image
+        id: build
+        uses: MArpogaus/image-builder-action@d7d88fae93411f854880f50474cec36936a74ef4 # v1.5.0
+        with:
+          image-name: ${{ inputs.image-name }}
+          containerfile: ${{ inputs.containerfile }}
+          context: ${{ inputs.context }}
+          platform: ${{ inputs.platform }}
+          slsa-verify-source: ${{ inputs.slsa-verify-source }}
+          cosign-public-key: ${{ inputs.cosign-public-key }}
+          build-args: ${{ inputs.build-args }}
+          free-disk-space: ${{ inputs.free-disk-space }}
+          overwrite-ref-tag: ${{ inputs.overwrite-ref-tag }}
+          signing-secret: ${{ secrets.SIGNING_SECRET }}
 
   provenance:
     needs: [build_and_push_image]
+    if: github.event_name != 'pull_request'
     permissions:
       actions: read
       id-token: write
