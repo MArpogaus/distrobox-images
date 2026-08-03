@@ -145,7 +145,7 @@ jobs:
       containerfile: ./containerfiles/base.containerfile
       context: ./context/${{ matrix.context }}
       platform: linux/amd64
-      free-disk-space: ${{ matrix.free-disk-space }}
+      free-disk-space: ${{ matrix.free-disk-space == true }}
       build-args: |
         BASE_IMAGE=${{ matrix.base-image }}
         LAYERS=${{ matrix.layers }}
