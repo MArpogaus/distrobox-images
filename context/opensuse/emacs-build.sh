@@ -1,12 +1,6 @@
 #!/bin/bash
 set -ouex pipefail
 
-# Refresh repositories
-zypper refresh
-
-# Update all packages
-zypper -n dist-upgrade
-
 # Install packages
 zypper -n install \
     ImageMagick \
@@ -37,6 +31,3 @@ zypper -n install \
     vim \
     zathura-plugin-pdf-poppler \
     zip
-
-# Clean package cache
-zypper clean --all

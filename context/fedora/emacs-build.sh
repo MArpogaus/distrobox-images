@@ -1,9 +1,6 @@
 #!/bin/bash
 set -ouex pipefail
 
-# Update package database
-dnf makecache
-
 # Install packages
 dnf install -y \
     7zip \
@@ -44,6 +41,3 @@ dnf install -y \
     vips-tools \
     zathura-pdf-poppler \
     zip
-
-# Clean package cache
-dnf clean all

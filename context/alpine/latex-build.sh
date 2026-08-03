@@ -1,10 +1,10 @@
 #!/bin/bash
 set -ouex pipefail
 
-# add testing repo
-sudo tee -a /etc/apk/repositories <<<"@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing"
+# Add testing repo
+tee -a /etc/apk/repositories <<<"@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing"
 
-# Update package database
+# Refresh package database
 apk update
 
 # Install LaTeX and related packages
@@ -14,6 +14,3 @@ apk add --no-cache \
     texlive-most \
     texmf-dist-fontsextra \
     zathura-pdf-poppler
-
-# Clean package cache
-apk cache clean

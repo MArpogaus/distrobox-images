@@ -1,10 +1,6 @@
 #!/bin/bash
 set -ouex pipefail
 
-cp /ctx/update-mirrors /usr/bin/
-update-mirrors US
-
-pacman -Syyu --noconfirm
 pacman -S --noconfirm \
     7zip \
     bash-language-server \
@@ -41,4 +37,3 @@ pacman -S --noconfirm \
     vim \
     zathura-pdf-poppler \
     zip
-pacman -Scc --noconfirm

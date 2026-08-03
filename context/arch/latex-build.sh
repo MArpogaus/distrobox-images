@@ -1,10 +1,6 @@
 #!/bin/bash
 set -ouex pipefail
 
-cp /ctx/update-mirrors /usr/bin/
-update-mirrors US
-
-pacman -Syyu --noconfirm
 pacman -S --noconfirm \
     biber \
     perl-file-homedir \
@@ -25,4 +21,3 @@ pacman -S --noconfirm \
     texlive-publishers \
     zathura-pdf-poppler \
     zip
-pacman -Scc --noconfirm

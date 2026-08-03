@@ -14,11 +14,5 @@ gpgcheck=1
 gpgkey=https://repo.cider.sh/RPM-GPG-KEY
 EOF
 
-# Refresh package cache
-dnf makecache
-
 # Install Cider
 dnf install -y Cider pipewire
-
-# Clean up
-dnf clean all
