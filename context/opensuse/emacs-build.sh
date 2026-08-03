@@ -22,7 +22,7 @@ zypper -n install \
     hunspell \
     pandoc \
     pdf2svg \
-    python-uv \
+    python313-uv \
     ripgrep \
     shfmt \
     tmux \
