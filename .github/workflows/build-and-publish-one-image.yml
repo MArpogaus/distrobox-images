@@ -32,7 +32,7 @@ on:
       free-disk-space:
         type: boolean
         required: false
-        default: true
+        default: false
       overwrite-ref-tag:
         type: string
         required: false
