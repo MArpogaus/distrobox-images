@@ -12,4 +12,7 @@ SigLevel = Required TrustedOnly
 Server = https://repo.cider.sh/arch
 EOF
 
+# Refresh package database
+pacman -Syyu --noconfirm
+
 pacman -S --noconfirm cider pipewire-pulse
