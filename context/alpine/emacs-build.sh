@@ -1,9 +1,6 @@
 #!/bin/bash
 set -ouex pipefail
 
-# Update package database
-apk update
-
 # Install packages
 apk add --no-cache \
     7zip \
@@ -43,6 +40,3 @@ apk add --no-cache \
     vips-tools \
     zathura-pdf-poppler \
     zip
-
-# Clean package cache
-apk cache clean

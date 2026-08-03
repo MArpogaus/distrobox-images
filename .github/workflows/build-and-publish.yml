@@ -37,6 +37,7 @@ jobs:
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: latex
           context: arch
+          free-disk-space: true
         - image-name: emacs-ai-arch
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: emacs,ai
@@ -45,10 +46,12 @@ jobs:
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: emacs,latex
           context: arch
+          free-disk-space: true
         - image-name: emacs-latex-ai-arch
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: emacs,latex,ai
           context: arch
+          free-disk-space: true
         - image-name: ai-arch
           base-image: ghcr.io/ublue-os/arch-toolbox:latest
           layers: ai
@@ -66,6 +69,7 @@ jobs:
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: latex
           context: fedora
+          free-disk-space: true
         - image-name: emacs-ai-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: emacs,ai
@@ -74,10 +78,12 @@ jobs:
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: emacs,latex
           context: fedora
+          free-disk-space: true
         - image-name: emacs-latex-ai-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: emacs,latex,ai
           context: fedora
+          free-disk-space: true
         - image-name: ai-fedora
           base-image: quay.io/fedora/fedora-toolbox:latest
           layers: ai
@@ -91,6 +97,7 @@ jobs:
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: latex
           context: alpine
+          free-disk-space: true
         - image-name: emacs-ai-alpine
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: emacs,ai
@@ -99,10 +106,12 @@ jobs:
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: emacs,latex
           context: alpine
+          free-disk-space: true
         - image-name: emacs-latex-ai-alpine
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: emacs,latex,ai
           context: alpine
+          free-disk-space: true
         - image-name: ai-alpine
           base-image: quay.io/toolbx-images/alpine-toolbox:edge
           layers: ai
@@ -136,6 +145,7 @@ jobs:
       containerfile: ./containerfiles/base.containerfile
       context: ./context/${{ matrix.context }}
       platform: linux/amd64
+      free-disk-space: ${{ matrix.free-disk-space == true }}
       build-args: |
         BASE_IMAGE=${{ matrix.base-image }}
         LAYERS=${{ matrix.layers }}

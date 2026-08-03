@@ -1,9 +1,9 @@
 #!/bin/bash
 set -ouex pipefail
 
-apt-get update
+# Install Node.js
 apt-get install -y nodejs npm
-npm install -g opencode-ai @google/gemini-cli
+
+# Install AI agents and ACP adapters (agent-shell)
+npm install -g opencode-ai @google/gemini-cli pi-acp @agentclientprotocol/claude-agent-acp
 npm install -g --ignore-scripts @earendil-works/pi-coding-agent
-apt-get clean
-rm -rf /var/lib/apt/lists/*

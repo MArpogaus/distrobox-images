@@ -21,7 +21,19 @@ on:
         type: string
         required: false
         default: ''
+      cosign-public-key:
+        type: string
+        required: false
+        default: ''
       build-args:
+        type: string
+        required: false
+        default: ''
+      free-disk-space:
+        type: boolean
+        required: false
+        default: false
+      overwrite-ref-tag:
         type: string
         required: false
         default: ''
@@ -41,22 +53,26 @@ jobs:
       id-token: write
     steps:
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd   # v6.0.2
+      uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1     # v7.0.1
 
     - name: Build and Push Image
       id: build
-      uses: MArpogaus/image-builder-action@376511ec51c9d0d2418ecb5505eeb87f09353df6  # v1.4.0
+      uses: MArpogaus/image-builder-action@3323c49a8e84aaced492ede1efef24dbee48ca48   # v1.5.1
       with:
         image-name: ${{ inputs.image-name }}
         containerfile: ${{ inputs.containerfile }}
         context: ${{ inputs.context }}
         platform: ${{ inputs.platform }}
         slsa-verify-source: ${{ inputs.slsa-verify-source }}
+        cosign-public-key: ${{ inputs.cosign-public-key }}
         build-args: ${{ inputs.build-args }}
+        free-disk-space: ${{ inputs.free-disk-space }}
+        overwrite-ref-tag: ${{ inputs.overwrite-ref-tag }}
         signing-secret: ${{ secrets.SIGNING_SECRET }}
 
   provenance:
     needs: [build_and_push_image]
+    if: github.event_name != 'pull_request'
     permissions:
       actions: read
       id-token: write

@@ -33,7 +33,7 @@ The available layers are:
 - *cider* — Cider, a cross-platform Apple Music client
 - *emacs* — Emacs editor
 - *latex* — LaTeX build tools
-- *ai* — AI tools (opencode + gemini-cli + pi-coding-agent via npm)
+- *ai* — AI tools via npm (opencode + gemini-cli + pi-coding-agent), with ACP adapters for [[https://github.com/xenodium/agent-shell][agent-shell]] (claude-agent-acp + pi-acp)
 - *ai (standalone)* — Same as *ai* layer, but without emacs base
 
 ** Build System
