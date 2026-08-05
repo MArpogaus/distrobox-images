@@ -28,6 +28,7 @@ pacman -S --noconfirm \
     pdf2svg \
     poppler \
     python-uv \
+    r \
     ripgrep \
     shellcheck \
     shfmt \

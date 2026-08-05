@@ -29,6 +29,7 @@ apk add --no-cache \
     pandoc \
     parallel \
     poppler-utils \
+    R \
     py3-uv \
     ripgrep \
     shellcheck \

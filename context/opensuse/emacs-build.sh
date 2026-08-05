@@ -5,6 +5,7 @@ set -ouex pipefail
 zypper -n install \
     ImageMagick \
     ShellCheck \
+    R-base \
     bash \
     bat \
     cmake \

@@ -30,6 +30,7 @@ dnf install -y \
     pandoc \
     parallel \
     poppler-utils \
+    R \
     ripgrep \
     shellcheck \
     shfmt \
