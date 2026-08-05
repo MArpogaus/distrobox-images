@@ -125,6 +125,10 @@ jobs:
           base-image: quay.io/toolbx-images/debian-toolbox:unstable
           layers: ai
           context: debian
+        - image-name: claude-desktop-debian
+          base-image: quay.io/toolbx-images/debian-toolbox:unstable
+          layers: claude-desktop
+          context: debian
         # OpenSUSE
         - image-name: emacs-opensuse
           base-image: quay.io/toolbx-images/opensuse-toolbox:tumbleweed

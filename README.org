@@ -16,7 +16,7 @@
 
 ** Flavours Overview
 
-This repository provides 25 pre-built container images across 5 distributions with
+This repository provides 26 pre-built container images across 5 distributions with
 composable layers. Each image is built from a single template using build args to
 select the base image and layer combination.
 
@@ -25,7 +25,7 @@ select the base image and layer combination.
 | Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
 | Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
 | Alpine   | emacs, latex, emacs-ai, emacs-latex-ai, ai                     |
-| Debian   | cider, ai                                                      |
+| Debian   | cider, ai, claude-desktop                                       |
 | OpenSUSE | emacs, emacs-ai, ai                                            |
 
 The available layers are:
@@ -35,6 +35,7 @@ The available layers are:
 - *latex* — LaTeX build tools
 - *ai* — AI tools via npm (opencode + gemini-cli + pi-coding-agent), with ACP adapters for [[https://github.com/xenodium/agent-shell][agent-shell]] (claude-agent-acp + pi-acp)
 - *ai (standalone)* — Same as *ai* layer, but without emacs base
+- *claude-desktop* — Claude Desktop for Linux (beta), via Anthropic's apt repository
 
 ** Build System
 
@@ -51,7 +52,7 @@ All images share a single [[file:containerfiles/base.containerfile][base contain
 
 *** CI Pipeline
 
-The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 25 images.
+The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 26 images.
 Each matrix entry specifies:
 
 - *image-name* — Output image name (e.g., =emacs-latex-ai-arch=)
