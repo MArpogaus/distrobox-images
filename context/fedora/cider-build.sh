@@ -16,3 +16,7 @@ EOF
 
 # Install Cider
 dnf install -y Cider pipewire
+
+# distrobox.ini only refers to /usr/local; link what this layer exports into it
+mkdir -p /usr/local/share/applications
+ln -sf "$(ls /usr/share/applications/[Cc]ider.desktop)" /usr/local/share/applications/cider.desktop
