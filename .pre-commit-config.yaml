@@ -27,3 +27,11 @@ repos:
   hooks:
   - id: shfmt
     args: [--simplify, --write, --indent, '4']
+- repo: local
+  hooks:
+  - id: gen-distrobox-ini
+    name: regenerate distrobox.ini from the build matrix
+    entry: scripts/gen-distrobox-ini.sh
+    language: script
+    pass_filenames: false
+    files: ^(\.github/matrix\.yaml|scripts/gen-distrobox-ini\.sh|distrobox\.ini)$

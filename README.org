@@ -16,7 +16,7 @@
 
 ** Flavours Overview
 
-This repository provides 25 pre-built container images across 5 distributions with
+This repository provides 26 pre-built container images across 5 distributions with
 composable layers. Each image is built from a single template using build args to
 select the base image and layer combination.
 
@@ -24,17 +24,20 @@ select the base image and layer combination.
 |----------+----------------------------------------------------------------|
 | Arch     | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
 | Fedora   | cider, emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai |
-| Alpine   | emacs, latex, emacs-ai, emacs-latex-ai, ai                     |
-| Debian   | cider, ai                                                      |
+| Alpine   | emacs, latex, emacs-ai, emacs-latex, emacs-latex-ai, ai        |
+| Debian   | cider, ai, claude-desktop                                      |
 | OpenSUSE | emacs, emacs-ai, ai                                            |
 
 The available layers are:
 
 - *cider* — Cider, a cross-platform Apple Music client
-- *emacs* — Emacs editor
+- *emacs* — Emacs editor, plus the CLI tooling it leans on (ripgrep, fd, pandoc, R, uv, …)
 - *latex* — LaTeX build tools
-- *ai* — AI tools via npm (opencode + gemini-cli + pi-coding-agent), with ACP adapters for [[https://github.com/xenodium/agent-shell][agent-shell]] (claude-agent-acp + pi-acp)
-- *ai (standalone)* — Same as *ai* layer, but without emacs base
+- *ai* — AI tools via npm (claude-code + opencode + gemini-cli + pi-coding-agent), with ACP adapters for [[https://github.com/xenodium/agent-shell][agent-shell]] (claude-agent-acp + pi-acp), plus the [[https://cli.github.com/][GitHub CLI]]
+- *claude-desktop* — Claude Desktop for Linux (beta), via Anthropic's apt repository
+
+Layers compose: =emacs-latex-ai-arch= is the =emacs=, =latex= and =ai= layers on the Arch
+base, while =ai-arch= is the =ai= layer on its own.
 
 ** Build System
 
@@ -44,20 +47,24 @@ All images share a single [[file:containerfiles/base.containerfile][base contain
 
 *** Build Arguments
 
-| Arg       | Description                           | Example                              |
-|-----------+---------------------------------------+--------------------------------------|
+| Arg        | Description                           | Example                              |
+|------------+---------------------------------------+--------------------------------------|
 | BASE_IMAGE | Upstream toolbox image                | ghcr.io/ublue-os/arch-toolbox:latest |
-| LAYERS    | Comma-separated list of build scripts | emacs,latex,ai                       |
+| LAYERS     | Comma-separated list of build scripts | emacs,latex,ai                       |
 
 *** CI Pipeline
 
-The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] defines a single matrix job that builds all 25 images.
-Each matrix entry specifies:
+The [[file:.github/workflows/build-and-publish.yml][build-and-publish workflow]] builds all 26 images from the matrix in
+[[file:.github/matrix.yaml][=.github/matrix.yaml=]]. Each entry specifies:
 
 - *image-name* — Output image name (e.g., =emacs-latex-ai-arch=)
 - *base-image* — Upstream toolbox base image
 - *layers* — Comma-separated layer scripts
 - *context* — Build context directory (=./context/<distro>=)
+
+That matrix is also the source of truth for =distrobox.ini=, which
+[[file:scripts/gen-distrobox-ini.sh][=scripts/gen-distrobox-ini.sh=]] regenerates via pre-commit. The generated file is
+committed, and CI fails if it is out of date.
 
 Every build produces a cryptographically signed image with SLSA Level 3 provenance
 via [[https://github.com/MArpogaus/image-builder-action][image-builder-action]].
@@ -89,6 +96,35 @@ distrobox create --image ghcr.io/marpogaus/emacs-arch:latest --name emacs-arch
 # Using toolbox
 toolbox create --image ghcr.io/marpogaus/emacs-arch:latest emacs-arch
 #+end_src
+
+**** Declarative Setup with =distrobox assemble=
+
+[[file:distrobox.ini][=distrobox.ini=]] holds one assemble profile per published image. It is generated from
+the build matrix, so it always lists exactly the images this repository publishes:
+
+#+begin_src bash
+curl -O https://raw.githubusercontent.com/MArpogaus/distrobox-images/main/distrobox.ini
+
+# create a single box
+distrobox assemble create --file distrobox.ini --name emacs-arch
+
+# or every box in the file
+distrobox assemble create --file distrobox.ini
+#+end_src
+
+The file is also attached as an asset to every tagged release. The committed copy
+tracks =:latest=; the copy attached to a release pins the release's image tag instead,
+so assembling from a release asset reproduces that exact set of images.
+
+Each profile declares its exports with distrobox's own =exported_apps= and
+=exported_bins= keys, so creating a box also puts =emacs=, the LaTeX binaries, the AI
+CLIs and the Cider and Claude Desktop launchers into =~/.local/bin= and your
+application menu. Both keys need absolute paths, and the distros disagree about what
+those are: Arch keeps =biber= in =/usr/bin/vendor_perl=, npm's global prefix varies,
+Cider's desktop entry is =Cider.desktop= on Fedora, and Claude Desktop's is
+=com.anthropic.Claude.desktop=. So every layer follows one rule — link what it exports
+into =/usr/local/bin= or =/usr/local/share/applications=, which is all =distrobox.ini=
+ever refers to. A tool that is missing breaks the image build, not the user's box.
 
 **** For secureblue and Other Security-Enhanced Systems
 
@@ -135,18 +171,24 @@ To fork this repository and create your own signed container images:
 2. *Add your build script(s)* to the appropriate context directory:
    - Create or modify scripts in =context/<distro>/<layer>-build.sh= (e.g., =context/fedora/mylayer-build.sh=)
    - Scripts must use =set -ouex pipefail= and perform their installation/configuration
+   - To have distrobox export what the layer installs, link it into =/usr/local/bin=
+     (=ln -sf "$(command -v mytool)" /usr/local/bin/mytool=) or
+     =/usr/local/share/applications=, then add the layer to the tables in
+     =scripts/gen-distrobox-ini.sh=. Never hardcode the tool's real path: =assemble=
+     aborts if an exported path is missing, so a wrong guess breaks the user's box,
+     whereas a failed link breaks the build where you can see it.
 
-3. *Add the image to the build matrix* in =.github/workflows/build-and-publish.yml=:
+3. *Add the image to the build matrix* in =.github/matrix.yaml=:
 
-   For *layered images* (add to existing base):
+   For *multi-layer images*, list the layers in the order they should run:
    #+begin_src yaml
    - image-name: emacs-mytool-fedora
-     base-image: ghcr.io/marpogaus/emacs-arch:latest
+     base-image: quay.io/fedora/fedora-toolbox:latest
      layers: emacs,mytool
      context: fedora
    #+end_src
 
-   For *standalone images* (no existing base):
+   For *single-layer images*:
    #+begin_src yaml
    - image-name: mytool-fedora
      base-image: quay.io/fedora/fedora-toolbox:latest
@@ -155,7 +197,13 @@ To fork this repository and create your own signed container images:
    #+end_src
 
    The =LAYERS= argument accepts a comma-separated list of build scripts. The
-   containerfile template =base.containerfile= handles everything else.
+   containerfile template =base.containerfile= handles everything else. Add
+   =free-disk-space: true= for images too large to build on a stock runner, and base
+   an image on an already-published one (=base-image: ghcr.io/marpogaus/emacs-fedora:latest=)
+   if you only want to add a layer on top.
+
+   Run =pre-commit run --all-files= afterwards to regenerate =distrobox.ini=; CI fails
+   if it is not in sync with the matrix. This needs [[https://github.com/mikefarah/yq][yq]] on your =PATH=.
 
 4. *Set up container signing* (highly recommended):
 
