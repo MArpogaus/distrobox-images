@@ -22,6 +22,10 @@ pacman -S --noconfirm \
     zathura-pdf-poppler \
     zip
 
+# Arch ships perl scripts (biber) under /usr/bin/vendor_perl, which only lands on
+# PATH via /etc/profile.d/perlbin.sh -- not sourced during the image build
+export PATH="${PATH}:/usr/bin/core_perl:/usr/bin/vendor_perl:/usr/bin/site_perl"
+
 # distrobox.ini only refers to /usr/local; link what this layer exports into it
 mkdir -p /usr/local/bin
 for b in latexmk pdflatex xelatex lualatex biber; do
