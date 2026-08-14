@@ -78,6 +78,8 @@ render() {
         echo
         echo "[${name}]"
         echo "image=${registry}/${name}:${tag}"
+        echo "pull=true"
+        echo "replace=true"
         [ -z "$apps" ] || echo "exported_apps=${apps}"
         [ -z "$bins" ] || echo "exported_bins=${bins}"
     done <<<"${entries}"
