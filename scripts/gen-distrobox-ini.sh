@@ -7,15 +7,12 @@
 # they moved. Distro packages land in /usr/bin; the ai layer pins npm's global
 # prefix to /usr/local because it otherwise differs per distro.
 #
-# usage: gen-distrobox-ini.sh [image-tag]
-#
-# The committed file uses the "latest" tag. CI re-runs this with the release tag
-# when attaching the file to a GitHub release, so a released distrobox.ini pins
-# the exact image versions that release was built from.
+# The committed file is the only output; the pre-commit hook regenerates it and
+# CI fails if it drifts from the matrix.
 set -euo pipefail
 
 registry=ghcr.io/marpogaus
-tag=${1:-latest}
+tag=latest
 repo_root=$(git rev-parse --show-toplevel)
 matrix=${repo_root}/.github/matrix.yaml
 out=${repo_root}/distrobox.ini
