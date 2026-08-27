@@ -13,6 +13,6 @@ dnf install -y \
 
 # distrobox.ini only refers to /usr/local; link what this layer exports into it
 mkdir -p /usr/local/bin
-for b in latexmk pdflatex xelatex lualatex biber; do
+for b in biber bibtex latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
     ln -sf "$(command -v "$b")" "/usr/local/bin/$b"
 done
