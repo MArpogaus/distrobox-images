@@ -17,6 +17,9 @@ repo_root=$(git rev-parse --show-toplevel)
 matrix=${repo_root}/.github/matrix.yaml
 out=${repo_root}/distrobox.ini
 
+apps_path=/usr/local/share/applications
+bins_path=/usr/local/bin
+
 if ! command -v yq >/dev/null; then
     echo "gen-distrobox-ini: yq is required (https://github.com/mikefarah/yq)" >&2
     exit 1
@@ -25,17 +28,24 @@ fi
 # What each layer exports. Keep in sync with context/*/<layer>-build.sh.
 layer_apps() {
     case $1 in
-    emacs) echo /usr/local/share/applications/emacs.desktop ;;
-    cider) echo /usr/local/share/applications/cider.desktop ;;
-    claude-desktop) echo /usr/local/share/applications/claude-desktop.desktop ;;
+    emacs) echo "$apps_path"/emacs.desktop ;;
+    cider) echo "$apps_path"/cider.desktop ;;
+    claude-desktop) echo "$apps_path"/claude-desktop.desktop ;;
     esac
 }
 
 layer_bins() {
     case $1 in
-    emacs) echo /usr/local/bin/emacs ;;
-    latex) echo /usr/local/bin/latexmk /usr/local/bin/pdflatex /usr/local/bin/xelatex /usr/local/bin/lualatex /usr/local/bin/biber ;;
-    ai) echo /usr/local/bin/claude /usr/local/bin/opencode /usr/local/bin/gemini /usr/local/bin/pi ;;
+    latex)
+        local all_bins=()
+        for b in biber bibtex dvisvgm latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
+            all_bins+=("$bins_path"/"$b")
+        done
+
+        echo "${all_bins[@]}"
+        ;;
+
+    ai) echo "$bins_path"/claude "$bins_path"/opencode "$bins_path"/gemini "$bins_path"/pi ;;
     esac
 }
 
