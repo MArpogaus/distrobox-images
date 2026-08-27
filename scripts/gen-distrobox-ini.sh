@@ -38,7 +38,7 @@ layer_bins() {
     case $1 in
     latex)
         local all_bins=()
-        for b in biber bibtex latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
+        for b in biber bibtex dvisvgm latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
             all_bins+=("$bins_path"/"$b")
         done
 

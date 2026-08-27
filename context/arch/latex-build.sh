@@ -28,6 +28,6 @@ export PATH="${PATH}:/usr/bin/core_perl:/usr/bin/vendor_perl:/usr/bin/site_perl"
 
 # distrobox.ini only refers to /usr/local; link what this layer exports into it
 mkdir -p /usr/local/bin
-for b in biber bibtex latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
+for b in biber bibtex dvisvgm latex latexdiff latexdiff-vc latexindent latexmk lualatex pdflatex xelatex; do
     ln -sf "$(command -v "$b")" "/usr/local/bin/$b"
 done
