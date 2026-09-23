@@ -21,16 +21,16 @@
   base-image: ghcr.io/ublue-os/arch-toolbox:latest
   layers: emacs,ai
   context: arch
-- image-name: emacs-latex-arch
-  base-image: ghcr.io/ublue-os/arch-toolbox:latest
-  layers: emacs,latex
-  context: arch
-  free-disk-space: true
-- image-name: emacs-latex-ai-arch
-  base-image: ghcr.io/ublue-os/arch-toolbox:latest
-  layers: emacs,latex,ai
-  context: arch
-  free-disk-space: true
+# - image-name: emacs-latex-arch
+#   base-image: ghcr.io/ublue-os/arch-toolbox:latest
+#   layers: emacs,latex
+#   context: arch
+#   free-disk-space: true
+# - image-name: emacs-latex-ai-arch
+#   base-image: ghcr.io/ublue-os/arch-toolbox:latest
+#   layers: emacs,latex,ai
+#   context: arch
+#   free-disk-space: true
 - image-name: ai-arch
   base-image: ghcr.io/ublue-os/arch-toolbox:latest
   layers: ai
@@ -53,16 +53,16 @@
   base-image: quay.io/fedora/fedora-toolbox:latest
   layers: emacs,ai
   context: fedora
-- image-name: emacs-latex-fedora
-  base-image: quay.io/fedora/fedora-toolbox:latest
-  layers: emacs,latex
-  context: fedora
-  free-disk-space: true
-- image-name: emacs-latex-ai-fedora
-  base-image: quay.io/fedora/fedora-toolbox:latest
-  layers: emacs,latex,ai
-  context: fedora
-  free-disk-space: true
+# - image-name: emacs-latex-fedora
+#   base-image: quay.io/fedora/fedora-toolbox:latest
+#   layers: emacs,latex
+#   context: fedora
+#   free-disk-space: true
+# - image-name: emacs-latex-ai-fedora
+#   base-image: quay.io/fedora/fedora-toolbox:latest
+#   layers: emacs,latex,ai
+#   context: fedora
+#   free-disk-space: true
 - image-name: ai-fedora
   base-image: quay.io/fedora/fedora-toolbox:latest
   layers: ai
@@ -81,25 +81,25 @@
   base-image: quay.io/toolbx-images/alpine-toolbox:edge
   layers: emacs,ai
   context: alpine
-- image-name: emacs-latex-alpine
-  base-image: quay.io/toolbx-images/alpine-toolbox:edge
-  layers: emacs,latex
-  context: alpine
-  free-disk-space: true
-- image-name: emacs-latex-ai-alpine
-  base-image: quay.io/toolbx-images/alpine-toolbox:edge
-  layers: emacs,latex,ai
-  context: alpine
-  free-disk-space: true
+# - image-name: emacs-latex-alpine
+#   base-image: quay.io/toolbx-images/alpine-toolbox:edge
+#   layers: emacs,latex
+#   context: alpine
+#   free-disk-space: true
+# - image-name: emacs-latex-ai-alpine
+#   base-image: quay.io/toolbx-images/alpine-toolbox:edge
+#   layers: emacs,latex,ai
+#   context: alpine
+#   free-disk-space: true
 - image-name: ai-alpine
   base-image: quay.io/toolbx-images/alpine-toolbox:edge
   layers: ai
   context: alpine
 # Debian
-- image-name: cider-debian
-  base-image: quay.io/toolbx-images/debian-toolbox:unstable
-  layers: cider
-  context: debian
+# - image-name: cider-debian
+#   base-image: quay.io/toolbx-images/debian-toolbox:unstable
+#   layers: cider
+#   context: debian
 - image-name: ai-debian
   base-image: quay.io/toolbx-images/debian-toolbox:unstable
   layers: ai
